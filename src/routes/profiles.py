@@ -1,12 +1,10 @@
 from fastapi import APIRouter, status, HTTPException
 from fastapi.params import Depends
-from pydantic import HttpUrl
-from sqlalchemy import select, cast
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import get_jwt_auth_manager, get_s3_storage_client
 from database import get_db, UserModel, UserGroupModel, UserProfileModel, UserGroupEnum
-from database.models.accounts import GenderEnum
 from exceptions import BaseSecurityError, S3FileUploadError
 from schemas.profiles import ProfileResponseSchema, ProfileCreateSchema
 from security.http import get_token
@@ -83,10 +81,10 @@ async def create_profile(
         )
 
     new_profile = UserProfileModel(
-        user_id=cast(int, user.id),
+        user_id=int(user.id),
         first_name=profile_data.first_name,
         last_name=profile_data.last_name,
-        gender=cast(GenderEnum, profile_data.gender),
+        gender=profile_data.gender,
         date_of_birth=profile_data.date_of_birth,
         info=profile_data.info,
         avatar=avatar_key
@@ -106,5 +104,5 @@ async def create_profile(
         gender=new_profile.gender,
         date_of_birth=new_profile.date_of_birth,
         info=new_profile.info,
-        avatar=cast(HttpUrl, avatar_url)
+        avatar=avatar_url
     )
