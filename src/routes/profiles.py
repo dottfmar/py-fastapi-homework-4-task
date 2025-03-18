@@ -25,9 +25,9 @@ async def create_profile(
         user_id: int,
         token: str = Depends(get_token),
         jwt_manager: JWTAuthManagerInterface = Depends(get_jwt_auth_manager),
-        db: AsyncSession = Depends(get_db),
         s3_client: S3StorageInterface = Depends(get_s3_storage_client),
-        profile_data: ProfileCreateSchema = Depends(ProfileCreateSchema.data_from_form)
+        profile_data: ProfileCreateSchema = Depends(ProfileCreateSchema.data_from_form),
+        db: AsyncSession = Depends(get_db),
 ) -> ProfileResponseSchema:
     try:
         payload = jwt_manager.decode_access_token(token)
